@@ -1,6 +1,7 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
+const uploadRoutes = require('./routes/upload');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -17,6 +18,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
+app.use(express.json({ limit: '10mb' }));
+
 // Connect to the database
 connectDB();
 
@@ -31,6 +34,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api', uploadRoutes);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

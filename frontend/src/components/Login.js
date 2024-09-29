@@ -1,16 +1,32 @@
 import React, { useState } from 'react';
 import { login } from '../auth';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import InputField from './InputField';
+import Upload from './Upload';
 
 const Login = () => {
-  const [username, setUsername] = useState('thabares');
-  const [password, setPassword] = useState('thabares');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
   const navigate = useNavigate();
+
+  const handleInputChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return !emailRegex.test(email) ? 'Invalid email address' : '';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await login(username, password);
+      const res = await login(formData);
       // Debugging: Check if res contains the expected structure
       console.log('API Response:', res);
 
@@ -24,23 +40,29 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type='text'
-        placeholder='Username'
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
-      />
-      <input
-        type='password'
-        value={password}
-        placeholder='Password'
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button type='submit'>Login</button>
-    </form>
+    <>
+      <Upload />
+      <form onSubmit={handleSubmit}>
+        <InputField
+          label='Email'
+          type='email'
+          name='email'
+          value={formData.email}
+          onChange={(value) => handleInputChange('email', value)}
+          validate={validateEmail}
+          required={true}
+        />
+        <InputField
+          label='Password'
+          type='password'
+          name='password'
+          value={formData.password}
+          onChange={(value) => handleInputChange('password', value)}
+          required={true}
+        />
+        <button type='submit'>Submit</button>
+      </form>
+    </>
   );
 };
 

@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-const API = axios.create({
+const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080/api',
   withCredentials: true, // Include cookies in requests
 });
 
 // Response interceptor to handle access token expiration and refresh token logic
-API.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => {
     return response; // Pass through successful responses
   },
@@ -33,7 +33,7 @@ API.interceptors.response.use(
         console.log('Successfully refreshed token:', data);
 
         // Retry the original request with the new token if applicable
-        return API(originalRequest); // Retry original request
+        return axiosInstance(originalRequest); // Retry original request
       } catch (err) {
         console.log('Error refreshing token:', err);
         if (err.response && err.response.status === 403) {
@@ -52,4 +52,4 @@ API.interceptors.response.use(
   }
 );
 
-export default API;
+export default axiosInstance;

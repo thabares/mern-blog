@@ -1,4 +1,4 @@
-import API from './axiosInterceptor'; // Your axios interceptor setup
+import axiosInstance from './axiosInterceptor'; // Your axios interceptor setup
 
 const API_URL = 'http://localhost:8080/api/auth'; // Adjust if needed
 
@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:8080/api/auth'; // Adjust if needed
 export const login = async (username, password) => {
   try {
     // Sending the login request, cookies will be automatically managed
-    const response = await API.post(
+    const response = await axiosInstance.post(
       `${API_URL}/login`,
       { username, password },
       { withCredentials: true }
@@ -22,7 +22,7 @@ export const login = async (username, password) => {
 export const register = async (username, password) => {
   try {
     // Sending the login request, cookies will be automatically managed
-    const response = await API.post(
+    const response = await axiosInstance.post(
       `${API_URL}/register`,
       { username, password },
       { withCredentials: true }
@@ -37,6 +37,6 @@ export const register = async (username, password) => {
 // Fetch Protected Data: Handles requests to protected endpoints
 export const fetchProtectedData = async () => {
   // No need to manually add the token; the cookie will automatically be sent with the request
-  const response = await API.get(`${API_URL}/protected`);
+  const response = await axiosInstance.get(`${API_URL}/protected`);
   return response.data;
 };

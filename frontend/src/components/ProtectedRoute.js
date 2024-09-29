@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import API from '../axiosInterceptor';
+import axiosInstance from '../axiosInterceptor';
 
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null means still checking auth status
@@ -9,7 +9,7 @@ const ProtectedRoute = () => {
     const checkAuth = async () => {
       try {
         // Attempt to access a protected endpoint to verify if the user is authenticated
-        await API.get('/auth/checkAuth'); // No need for withCredentials since it's already set in the API instance
+        await axiosInstance.get('/auth/checkAuth'); // No need for withCredentials since it's already set in the API instance
         setIsAuthenticated(true);
       } catch (error) {
         setIsAuthenticated(false);
