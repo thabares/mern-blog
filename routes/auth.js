@@ -24,13 +24,22 @@ const setCookies = (res, token, refreshToken) => {
 
 // Register
 router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { fullName, username, email, password, confirmPassword } = req.body;
 
   try {
-    let user = await User.findOne({ username });
-    if (user) return res.status(400).json({ msg: 'User already exists' });
+    if (password !== confirmPassword) {
+      return res.status(400).json({ msg: 'Password does not match' });
+    }
 
-    user = new User({ username, password: await bcrypt.hash(password, 10) });
+    let user = await User.findOne({ username });
+    if (user) return res.status(400).json({ msg: 'Username already exists' });
+
+    user = new User({
+      fullName,
+      username,
+      email,
+      password: await bcrypt.hash(password, 10),
+    });
     await user.save();
 
     const token = jwt.sign({ user: { id: user.id } }, process.env.JWT_SECRET, {

@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { register } from '../auth';
 import Header from '../components/Header';
 import styled from 'styled-components';
+import { FaRegistered } from 'react-icons/fa';
 import { ImAccessibility } from 'react-icons/im';
+import InputField from '../components/InputField';
+import Button from '../components/Button';
+import Toaster from '../components/Toaster';
 
 const Wrapper = styled.section``;
 
@@ -31,17 +34,38 @@ const IconWrapper = styled.div`
   }
 `;
 
-const FormWrapper = styled.div``;
+const FormWrapper = styled.form`
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const FormHeader = styled.h2`
+  font-weight: 800;
+  color: #bf4f74;
+`;
 
 const Register = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [formFields, setFormFields] = useState({
+    fullName: '',
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const handleFormFields = (event) => {
+    const { name, value } = event.target;
+    setFormFields({ ...formFields, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await register();
-      alert('User registered successfully!'); // Notify user of success
+      const res = await register(formFields);
+      Toaster.sucess('User registered successfully!'); // Notify user of success
     } catch (error) {
       console.error(error);
       alert('Registration failed. Please try again.'); // Notify user of failure
@@ -55,22 +79,48 @@ const Register = () => {
         <IconWrapper>
           <ImAccessibility />
         </IconWrapper>
-        <FormWrapper>
-          <form onSubmit={handleSubmit}>
-            <input
-              type='text'
-              placeholder='Username'
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-            <input
-              type='password'
-              placeholder='Password'
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button type='submit'>Register</button>
-          </form>
+        <FormWrapper onSubmit={handleSubmit} autoComplete='hidden'>
+          <FormHeader>Register</FormHeader>
+          <InputField
+            placeholder='Fullname'
+            label='Fullname'
+            name='fullName'
+            onChange={handleFormFields}
+            required={true}
+            value={formFields.fullName}
+          />
+          <InputField
+            placeholder='Username'
+            label='Username'
+            name='username'
+            onChange={handleFormFields}
+            required={true}
+          />
+          <InputField
+            type='email'
+            placeholder='Email'
+            label='Email'
+            name='email'
+            onChange={handleFormFields}
+            required={true}
+          />
+          <InputField
+            type='password'
+            label='Password'
+            name='password'
+            placeholder='Password'
+            onChange={handleFormFields}
+            required={true}
+          />
+          <InputField
+            type='password'
+            placeholder='Confirm password'
+            label='Confirm password'
+            name='confirmPassword'
+            onChange={handleFormFields}
+            required={true}
+          />
+          <Button type='submit' label='Register' icon={<FaRegistered />} />
         </FormWrapper>
       </ContentWrapper>
     </Wrapper>

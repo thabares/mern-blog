@@ -1,3 +1,4 @@
+import axios from 'axios';
 import axiosInstance from './axiosInterceptor'; // Your axios interceptor setup
 
 const API_URL = 'http://localhost:8080/api/auth'; // Adjust if needed
@@ -6,7 +7,7 @@ const API_URL = 'http://localhost:8080/api/auth'; // Adjust if needed
 export const login = async (username, password) => {
   try {
     // Sending the login request, cookies will be automatically managed
-    const response = await axiosInstance.post(
+    const response = await axios.post(
       `${API_URL}/login`,
       { username, password },
       { withCredentials: true }
@@ -19,14 +20,12 @@ export const login = async (username, password) => {
   }
 };
 
-export const register = async (username, password) => {
+export const register = async (formValue) => {
   try {
     // Sending the login request, cookies will be automatically managed
-    const response = await axiosInstance.post(
-      `${API_URL}/register`,
-      { username, password },
-      { withCredentials: true }
-    );
+    const response = await axios.post(`${API_URL}/register`, formValue, {
+      withCredentials: true,
+    });
     // No need to store tokens manually, they will be stored in HTTP-only cookies
     return response.data;
   } catch (error) {

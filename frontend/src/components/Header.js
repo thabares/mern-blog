@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { FaRegistered } from 'react-icons/fa';
 import { RiLoginBoxFill } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -33,14 +34,15 @@ const Button = styled.button`
 `;
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <Wrapper>
       <Title>BLOG</Title>
       <AuthWrapper>
-        <Button title='Register'>
+        <Button title='Register' onClick={() => navigate('/register')}>
           <FaRegistered />
         </Button>
-        <Button title='Login'>
+        <Button title='Login' onClick={() => navigate('/login')}>
           <RiLoginBoxFill />
         </Button>
       </AuthWrapper>
