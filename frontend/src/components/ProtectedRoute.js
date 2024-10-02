@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import axiosInstance from '../axiosInterceptor';
+import Header from './Header';
 
 const ProtectedRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // null means still checking auth status
@@ -23,7 +24,14 @@ const ProtectedRoute = () => {
   if (isAuthenticated === null) return <div>Loading...</div>;
 
   // If authenticated, render child routes; otherwise, redirect to login
-  return isAuthenticated ? <Outlet /> : <Navigate to='/login' />;
+  return isAuthenticated ? (
+    <>
+      <Header />
+      <Outlet />
+    </>
+  ) : (
+    <Navigate to='/login' />
+  );
 };
 
 export default ProtectedRoute;

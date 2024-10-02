@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { login } from '../auth';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import InputField from './InputField';
-import Upload from './Upload';
+import Upload from '../components/Upload';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -43,7 +42,7 @@ const Login = () => {
     <>
       <Upload />
       <form onSubmit={handleSubmit}>
-        <InputField
+        <input
           label='Email'
           type='email'
           name='email'
@@ -52,7 +51,7 @@ const Login = () => {
           validate={validateEmail}
           required={true}
         />
-        <InputField
+        <input
           label='Password'
           type='password'
           name='password'
