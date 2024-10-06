@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['admin', 'user'], default: 'user' },
   profileImage: { type: String }, // URL to the user's profile image
   bio: { type: String }, // Short bio for the user
+  refreshToken: { type: String },
   socialLinks: {
     // Optional links to social media profiles
     twitter: { type: String },

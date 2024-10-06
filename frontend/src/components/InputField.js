@@ -33,6 +33,7 @@ const InputField = ({
   label,
   required,
   name,
+  value,
 }) => {
   return (
     <InputElementContainer>
@@ -48,6 +49,7 @@ const InputField = ({
         placeholder={placeholder}
         onChange={onChange}
         required
+        value={value}
       />
     </InputElementContainer>
   );

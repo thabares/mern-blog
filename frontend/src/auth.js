@@ -4,7 +4,7 @@ import axiosInstance from './axiosInterceptor'; // Your axios interceptor setup
 const API_URL = 'http://localhost:8080/api/auth'; // Adjust if needed
 
 // Login Function: Handles login, tokens are stored in cookies
-export const login = async (username, password) => {
+export const login = async ({ username, password }) => {
   try {
     // Sending the login request, cookies will be automatically managed
     const response = await axios.post(

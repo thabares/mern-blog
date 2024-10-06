@@ -3,10 +3,10 @@ import { register } from '../auth';
 import Header from '../components/Header';
 import styled from 'styled-components';
 import { FaRegistered } from 'react-icons/fa';
-import { ImAccessibility } from 'react-icons/im';
 import InputField from '../components/InputField';
 import Button from '../components/Button';
 import Toaster from '../components/Toaster';
+import { FiSunset } from 'react-icons/fi';
 
 const Wrapper = styled.section``;
 
@@ -68,7 +68,7 @@ const Register = () => {
       Toaster.sucess('User registered successfully!'); // Notify user of success
     } catch (error) {
       console.error(error);
-      alert('Registration failed. Please try again.'); // Notify user of failure
+      Toaster.error('Registration failed. Please try again.'); // Notify user of failure
     }
   };
 
@@ -77,7 +77,7 @@ const Register = () => {
       <Header />
       <ContentWrapper>
         <IconWrapper>
-          <ImAccessibility />
+          <FiSunset />
         </IconWrapper>
         <FormWrapper onSubmit={handleSubmit} autoComplete='hidden'>
           <FormHeader>Register</FormHeader>
