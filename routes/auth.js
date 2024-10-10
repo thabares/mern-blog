@@ -185,10 +185,39 @@ router.get('/protected', auth, (req, res) => {
 });
 
 // Logout
-router.post('/logout', (req, res) => {
-  res.clearCookie('token');
-  res.clearCookie('refreshToken');
-  res.send({ message: 'Logged out successfully' });
+router.post('/logout', async (req, res) => {
+  const { refreshToken } = req.cookies;
+
+  // Check if a refresh token exists in cookies
+  if (!refreshToken) {
+    return res.status(400).json({ message: 'No refresh token provided' });
+  }
+
+  try {
+    // Find the user with the provided refresh token
+    const user = await User.findOne({ refreshToken });
+
+    if (!user) {
+      // If the user isn't found, still clear the cookies and return a success message
+      res.clearCookie('token');
+      res.clearCookie('refreshToken');
+      return res.status(200).json({ message: 'Logged out successfully' });
+    }
+
+    // Clear the refresh token in the database
+    user.refreshToken = null;
+    await user.save();
+
+    // Clear cookies on the client side
+    res.clearCookie('token');
+    res.clearCookie('refreshToken');
+
+    // Send a success response
+    res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout failed:', error);
+    res.status(500).json({ message: 'Logout failed. Please try again.' });
+  }
 });
 
 module.exports = router;

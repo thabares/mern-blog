@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import axiosInstance from '../axiosInterceptor';
 import Header from './Header';
+import { AuthContext } from '../App';
 
 const ProtectedRoute = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // null means still checking auth status
+  const { isAuthenticated, setIsAuthenticated, setUserInformation } =
+    useContext(AuthContext); // null means still checking auth status
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Attempt to access a protected endpoint to verify if the user is authenticated
-        await axiosInstance.get('/auth/checkAuth'); // No need for withCredentials since it's already set in the API instance
-        setIsAuthenticated(true);
+        const persistedAuth =
+          localStorage.getItem('isAuthenticated') === 'true';
+        if (persistedAuth) {
+          setIsAuthenticated(true);
+        } else {
+          const userInformation = await axiosInstance.get('/auth/checkAuth');
+          setUserInformation(userInformation.data.user);
+          setIsAuthenticated(true);
+        }
       } catch (error) {
         setIsAuthenticated(false);
       }

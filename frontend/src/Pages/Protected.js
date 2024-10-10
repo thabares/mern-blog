@@ -16,7 +16,6 @@ const Protected = () => {
     };
     fetchProtectedAPIData();
   }, []);
-  console.log(userId, 'userId');
   return <div>{userId} protected</div>;
 };
 export default Protected;

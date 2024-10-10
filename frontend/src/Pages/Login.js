@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { login } from '../auth';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Upload from '../components/Upload';
@@ -9,6 +9,7 @@ import InputField from '../components/InputField';
 import Button from '../components/Button';
 import { RiLoginBoxFill } from 'react-icons/ri';
 import Toaster from '../components/Toaster';
+import { AuthContext } from '../App';
 
 const Wrapper = styled.section``;
 
@@ -55,6 +56,13 @@ const Login = () => {
     password: '',
   });
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext); // Access isAuthenticated from AuthContext
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/'); // Redirect to home if the user is already authenticated
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleFormFields = (event) => {
     const { name, value } = event.target;
@@ -101,7 +109,7 @@ const Login = () => {
               label='Password'
               name='password'
               placeholder='Password'
-              value={formFields.username}
+              value={formFields.password}
               onChange={handleFormFields}
               required={true}
             />

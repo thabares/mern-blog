@@ -1,7 +1,10 @@
 import styled from 'styled-components';
 import { FaRegistered } from 'react-icons/fa';
-import { RiLoginBoxFill } from 'react-icons/ri';
+import { RiLoginBoxFill, RiLogoutBoxFill } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useContext } from 'react';
+import { AuthContext } from '../App';
+import axiosInstance from '../axiosInterceptor';
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -35,16 +38,44 @@ const Button = styled.button`
 
 const Header = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext);
+
+  const logout = async () => {
+    try {
+      // Call the logout API to remove the refresh token from the server
+      await axiosInstance.post('/auth/logout');
+
+      // Clear local authentication data (localStorage)
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userInformation');
+
+      // Redirect user to login page after logout
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Logout failed', error);
+      alert('Logout failed, please try again.');
+    }
+  };
+
   return (
     <Wrapper>
       <Title>BLOG</Title>
       <AuthWrapper>
-        <Button title='Register' onClick={() => navigate('/register')}>
-          <FaRegistered />
-        </Button>
-        <Button title='Login' onClick={() => navigate('/login')}>
-          <RiLoginBoxFill />
-        </Button>
+        {!isAuthenticated && (
+          <Button title='Register' onClick={() => navigate('/register')}>
+            <FaRegistered />
+          </Button>
+        )}
+        {!isAuthenticated && (
+          <Button title='Login' onClick={() => navigate('/login')}>
+            <RiLoginBoxFill />
+          </Button>
+        )}
+        {isAuthenticated && (
+          <Button title='Logout' onClick={() => logout()}>
+            <RiLogoutBoxFill />
+          </Button>
+        )}
       </AuthWrapper>
     </Wrapper>
   );

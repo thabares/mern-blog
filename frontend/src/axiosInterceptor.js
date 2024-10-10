@@ -37,15 +37,28 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         console.log('Error refreshing token:', err);
         if (err.response && err.response.status === 403) {
-          alert('Session expired, please log in again.');
-          // Redirect to the login page using window.location
+          alert('Session expired, logging you out...');
+          // Log out the user by clearing local storage/session data
+          localStorage.removeItem('isAuthenticated');
+          localStorage.removeItem('userInformation');
+          // Redirect to login page
           window.location.href = '/login';
         }
       }
-    } else {
-      alert('Unexpected error, redirecting to login.');
-      // Redirect for other errors as well
+    } else if (error.response && error.response.status === 403) {
+      // Handle forbidden error (e.g., refresh token invalid)
+      alert('Session expired, logging you out...');
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('userInformation');
       window.location.href = '/login';
+    } else if (!error.response) {
+      // Network or server error (no response received)
+      console.error('Network or server error:', error.message);
+      alert('Network error, please try again later.');
+    } else {
+      // Handle other types of errors (e.g., 500 internal server error)
+      console.error('Unexpected error:', error.message);
+      alert('An unexpected error occurred.');
     }
 
     return Promise.reject(error);
