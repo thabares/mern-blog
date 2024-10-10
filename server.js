@@ -2,6 +2,7 @@ const express = require('express');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const uploadRoutes = require('./routes/upload');
+const postRoutes = require('./routes/post');
 const cors = require('cors');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -26,6 +27,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/post', postRoutes);
 app.use('/api', uploadRoutes);
 
 // Serve static files from the React app
