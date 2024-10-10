@@ -9,6 +9,7 @@ import axiosInstance from '../axiosInterceptor';
 const Title = styled.h1`
   font-size: 1.5em;
   font-family: Marker Felt, cursive;
+  cursor: pointer;
 `;
 
 // Create a Wrapper component that'll render a <section> tag with some styles
@@ -36,9 +37,25 @@ const Button = styled.button`
   padding: 0px;
 `;
 
+const UserIcon = styled.button`
+  margin-left: 1rem;
+  cursor: pointer;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  font-size: 1.1rem;
+  padding: 0px;
+  background-color: #bf4f74;
+  height: 1em;
+  width: 1em;
+  border-radius: 1em;
+  color: papayawhip;
+  font-weight: 900;
+`;
+
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, userInformation } = useContext(AuthContext);
 
   const logout = async () => {
     try {
@@ -57,9 +74,11 @@ const Header = () => {
     }
   };
 
+  console.log('userInformation', userInformation?.username[0]?.toUpperCase());
+
   return (
     <Wrapper>
-      <Title>BLOG</Title>
+      <Title onClick={() => navigate('/')}>BLOG</Title>
       <AuthWrapper>
         {!isAuthenticated && (
           <Button title='Register' onClick={() => navigate('/register')}>
@@ -70,6 +89,14 @@ const Header = () => {
           <Button title='Login' onClick={() => navigate('/login')}>
             <RiLoginBoxFill />
           </Button>
+        )}
+        {isAuthenticated && (
+          <UserIcon
+            title={userInformation?.username}
+            onClick={() => navigate('/profile')}
+          >
+            {userInformation?.username[0]?.toUpperCase()}
+          </UserIcon>
         )}
         {isAuthenticated && (
           <Button title='Logout' onClick={() => logout()}>

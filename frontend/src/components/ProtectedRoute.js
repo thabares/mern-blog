@@ -3,6 +3,12 @@ import { Navigate, Outlet } from 'react-router-dom';
 import axiosInstance from '../axiosInterceptor';
 import Header from './Header';
 import { AuthContext } from '../App';
+import styled from 'styled-components';
+
+const MainContentWrapper = styled.main`
+  flex-grow: 1; // Makes the main content take up the remaining space
+  display: flex;
+`;
 
 const ProtectedRoute = () => {
   const { isAuthenticated, setIsAuthenticated, setUserInformation } =
@@ -35,7 +41,9 @@ const ProtectedRoute = () => {
   return isAuthenticated ? (
     <>
       <Header />
-      <Outlet />
+      <MainContentWrapper>
+        <Outlet />
+      </MainContentWrapper>
     </>
   ) : (
     <Navigate to='/login' />

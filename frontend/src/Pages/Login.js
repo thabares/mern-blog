@@ -13,7 +13,7 @@ import { AuthContext } from '../App';
 
 const Wrapper = styled.section``;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled.main`
   display: flex;
   width: 100%;
   height: calc(100vh - 8rem);
@@ -87,37 +87,35 @@ const Login = () => {
   };
 
   return (
-    <>
-      <Wrapper>
-        <Header />
-        <ContentWrapper>
-          <IconWrapper>
-            <FiSunset />
-          </IconWrapper>
-          <FormWrapper onSubmit={handleSubmit} autoComplete='hidden'>
-            <FormHeader>Login</FormHeader>
-            <InputField
-              placeholder='Username / Email'
-              label='Username / Email'
-              name='username'
-              onChange={handleFormFields}
-              value={formFields.username}
-              required={true}
-            />
-            <InputField
-              type='password'
-              label='Password'
-              name='password'
-              placeholder='Password'
-              value={formFields.password}
-              onChange={handleFormFields}
-              required={true}
-            />
-            <Button type='submit' label='Login' icon={<RiLoginBoxFill />} />
-          </FormWrapper>
-        </ContentWrapper>
-      </Wrapper>
-    </>
+    <Wrapper>
+      <Header />
+      <ContentWrapper>
+        <IconWrapper>
+          <FiSunset />
+        </IconWrapper>
+        <FormWrapper onSubmit={handleSubmit} autoComplete='hidden'>
+          <FormHeader>Login</FormHeader>
+          <InputField
+            placeholder='Username / Email'
+            label='Username / Email'
+            name='username'
+            onChange={handleFormFields}
+            value={formFields.username}
+            required={true}
+          />
+          <InputField
+            type='password'
+            label='Password'
+            name='password'
+            placeholder='Password'
+            value={formFields.password}
+            onChange={handleFormFields}
+            required={true}
+          />
+          <Button type='submit' label='Login' icon={<RiLoginBoxFill />} />
+        </FormWrapper>
+      </ContentWrapper>
+    </Wrapper>
   );
 };
 

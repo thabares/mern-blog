@@ -1,10 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
-import Protected from './Pages/Protected';
 import ProtectedRoute from './components/ProtectedRoute';
 import PageNotFound from './Pages/PageNotFound';
 import { createContext, useEffect, useState } from 'react';
+import Home from './Pages/Home';
+import Profile from './Pages/Profile';
 
 export const AuthContext = createContext({
   isAuthenticated: false,
@@ -42,7 +43,8 @@ function App() {
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
-            <Route path='/' element={<Protected />} />
+            <Route path='/' element={<Home />} />
+            <Route path='/profile' element={<Profile />} />
           </Route>
         </Routes>
       </Router>
