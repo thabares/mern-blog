@@ -1,50 +1,45 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Import the styles
 
 const PostWrapper = styled.div`
   display: flex;
-  flex-direction: column; // Align children vertically
-  flex-grow: 1; // Allow PostWrapper to grow
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%; // Ensure it takes full width
 `;
 
 const CreatePostWrapper = styled.div`
   background-color: #f3dab1;
-  height: auto; // Let it adapt to the content height
-  width: 100%; // Ensure it takes the full width of the parent
-  padding: 5%; // Padding may push content, adjust if needed
-  box-sizing: border-box; // Include padding and border in element's total width
-  display: flex;
-  flex-direction: column;
-  border-radius: 2rem; // Keep border radius for aesthetics
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // Optional: Add shadow for better visibility
+  width: 100%;
+  max-width: 800px; // Limit the maximum width
+  padding: 4% 5% 5% 5%;
+  border-radius: 2rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 0 auto; // Center the wrapper
+  box-sizing: border-box; // Include padding and border in the width
+  margin-bottom: 5%;
+  height: 250px; // Set a fixed height for the wrapper
+  overflow: hidden; // Prevent overflow from the editor
 `;
 
-const TextareaElement = styled.textarea`
-  height: 3rem; // Initial height
-  transition: height 0.3s ease; // Animation for height
-  border: 1px solid #ccc;
-  padding: 0.5rem; // Inner padding
-  border-radius: 5px; // Rounded corners
-  width: 100%; // Ensure input takes full width
-  resize: none; // Disable manual resizing
+const CreatePostTitleWrapper = styled.div`
+  margin-bottom: 20px; // Add space below the title
+`;
 
-  &:focus {
-    height: 6rem; // Height when focused (increase as needed)
-    border: 1px solid #bf4f74; // Change border color on focus
-    outline: none; // Remove default outline
-  }
+const CreatePostTitle = styled.h2`
+  margin: 0; // Remove default margin
+  font-size: 1.2rem; // Adjust the font size
+  color: #bf4f74;
 `;
 
 const ButtonWrapper = styled.div`
   display: flex;
-  justify-content: flex-end; // Align the button to the end
-  opacity: 0;
-  visibility: hidden;
-
-  ${TextareaElement}:focus + & {
-    opacity: 1; // Show the button when the input is focused
-    visibility: visible; // Make it visible
-  }
+  justify-content: flex-end;
+  opacity: ${(props) => (props.isFocused ? 1 : 0)};
+  visibility: ${(props) => (props.isFocused ? 'visible' : 'hidden')};
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 `;
 
 const Button = styled.button`
@@ -55,18 +50,32 @@ const Button = styled.button`
   color: white;
   border: none;
   border-radius: 5px;
-  transition: opacity 0.3s ease; // Animation for opacity
 `;
 
 const PostListWrapper = styled.div`
-  margin-top: 10px; // Add some spacing between the input and the posts
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  height: 50vh; /* Set a fixed height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding-right: 20px; /* Add space for the scrollbar */
+  box-sizing: border-box; /* Include padding in the width */
+  position: relative; /* Ensure positioning for scrollbar */
 `;
 
 const PostListContainer = styled.div`
-  margin-bottom: 10px; // Add space between individual posts
   padding: 1rem;
-  border: 1px solid #ccc; // Optional: Add border for visibility
-  border-radius: 5px; // Rounded corners for posts
+  margin-top: ${(props) => (props.value === 0 ? '2%' : '3%')};
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+`;
+
+const StyledReactQuill = styled(ReactQuill)`
+  .ql-editor {
+    min-height: 4rem; // Initial height
+    max-height: 4rem; // Maximum height when focused
+    overflow-y: auto; // Enable internal scrolling for the editor
+  }
 `;
 
 const PostList = () => {
@@ -81,20 +90,71 @@ const PostList = () => {
       author: 'thabares',
       createdAt: new Date(),
     },
+    {
+      content: 'Test2',
+      author: 'thabares',
+      createdAt: new Date(),
+    },
+    {
+      content: 'Test3',
+      author: 'thabares',
+      createdAt: new Date(),
+    },
+    {
+      content: 'Test4',
+      author: 'thabares',
+      createdAt: new Date(),
+    },
+    {
+      content: 'Test5',
+      author: 'thabares',
+      createdAt: new Date(),
+    },
+    {
+      content: 'Test6',
+      author: 'thabares',
+      createdAt: new Date(),
+    },
+    {
+      content: 'Test7',
+      author: 'thabares',
+      createdAt: new Date(),
+    },
   ]);
+  const [content, setContent] = useState('');
+  const [isFocused, setIsFocused] = useState(false); // Track focus state
+
+  const handlePost = () => {
+    const newPost = {
+      content,
+      author: 'thabares',
+      createdAt: new Date(),
+    };
+    setPosts([...posts, newPost]);
+    setContent(''); // Clear content after posting
+  };
 
   return (
     <PostWrapper>
       <CreatePostWrapper>
-        <TextareaElement placeholder="What's on your mind?" />
-        <ButtonWrapper>
-          <Button>Add Post</Button>
+        <CreatePostTitleWrapper>
+          <CreatePostTitle>Create your post</CreatePostTitle>
+        </CreatePostTitleWrapper>
+        <StyledReactQuill
+          value={content}
+          onChange={setContent}
+          placeholder="What's on your mind?"
+          onFocus={() => setIsFocused(true)} // Set focus state to true
+          onBlur={() => setIsFocused(false)} // Set focus state to false
+        />
+        <ButtonWrapper isFocused={isFocused}>
+          <Button onClick={handlePost}>Add Post</Button>
         </ButtonWrapper>
       </CreatePostWrapper>
       <PostListWrapper>
         {posts.map((post, index) => (
-          <PostListContainer key={index}>
-            <div>{post.content}</div>
+          <PostListContainer key={index} value={index}>
+            <div dangerouslySetInnerHTML={{ __html: post.content }} />
             <div>Author: {post.author}</div>
             <div>Created At: {post.createdAt.toString()}</div>
           </PostListContainer>
