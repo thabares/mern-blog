@@ -18,6 +18,7 @@ const postSchema = new mongoose.Schema({
   // New fields for comments and likes
   comments: [commentSchema], // Array of comments
   likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Array of users who liked the post
+  bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 });
 
 // Create the Post model

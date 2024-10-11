@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { register } from '../auth';
 import Header from '../components/Header';
 import styled from 'styled-components';
@@ -7,6 +7,7 @@ import InputField from '../components/InputField';
 import Button from '../components/Button';
 import Toaster from '../components/Toaster';
 import { FiSunset } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const Wrapper = styled.section``;
 
@@ -40,6 +41,10 @@ const FormWrapper = styled.form`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  @media only screen and (max-width: 600px) {
+    width: 100vw;
+  }
 `;
 
 const FormHeader = styled.h2`
@@ -48,6 +53,7 @@ const FormHeader = styled.h2`
 `;
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formFields, setFormFields] = useState({
     fullName: '',
     username: '',
@@ -66,6 +72,7 @@ const Register = () => {
     try {
       const res = await register(formFields);
       Toaster.sucess('User registered successfully!'); // Notify user of success
+      navigate('/login');
     } catch (error) {
       console.error(error);
       Toaster.error('Registration failed. Please try again.'); // Notify user of failure

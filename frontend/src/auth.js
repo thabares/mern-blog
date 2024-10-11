@@ -52,3 +52,16 @@ export const getPosts = async () => {
 
   return response.data;
 };
+
+export const bookmarkPost = async (postId) => {
+  const response = await axiosInstance.post(
+    `${API_URL}/post/${postId}/bookmark`
+  );
+
+  return response.data;
+};
+
+export const deletePost = async (postId) => {
+  const response = await axiosInstance.delete(`${API_URL}/post/${postId}`);
+  return response.data;
+};

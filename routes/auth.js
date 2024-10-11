@@ -171,17 +171,7 @@ router.post('/token', async (req, res) => {
 
 router.get('/checkAuth', auth, (req, res) => {
   // If auth middleware passes, the token is valid, and we respond with OK
-  res
-    .status(200)
-    .json({ message: 'success', user: { username: req.user.username } });
-});
-
-// Protected route example
-router.get('/protected', auth, (req, res) => {
-  res.json({
-    message: 'This is a protected route',
-    user: { username: req.user.username },
-  });
+  res.status(200).json({ message: 'success', user: req.user });
 });
 
 // Logout

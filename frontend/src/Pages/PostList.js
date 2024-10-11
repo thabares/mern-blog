@@ -4,7 +4,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import the styles
 import Toaster from '../components/Toaster';
 import axiosInstance from '../axiosInterceptor';
-import { createPosts, getPosts } from '../auth';
+import { bookmarkPost, createPosts, deletePost, getPosts } from '../auth';
+import Post from '../components/Post';
 
 const PostWrapper = styled.div`
   display: flex;
@@ -86,67 +87,8 @@ const StyledReactQuill = styled(ReactQuill)`
   }
 `;
 
-const PostActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-`;
-
-const LikeButton = styled.button`
-  background-color: transparent;
-  border: none;
-  color: #007bff;
-  cursor: pointer;
-  font-weight: bold;
-`;
-
-const CommentWrapper = styled.div`
-  display: flex;
-  margin-top: 10px; // Adjust margin for spacing
-`;
-
-const CommentInput = styled.input`
-  flex-grow: 1; // Allow input to grow
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-right: 5px; // Space between input and button
-  max-width: 70%; // Set max width for the input
-`;
-
-const CommentButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #bf4f74;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-`;
-
-const CommentList = styled.div`
-  margin-top: 10px;
-  font-size: 0.9rem;
-  color: #555;
-`;
-
 const PostList = () => {
-  const [posts, setPosts] = useState([
-    {
-      content: 'Test',
-      author: 'thabares',
-      createdAt: new Date(),
-      likes: 0, // Initial like count
-      comments: [], // Array to hold comments
-    },
-    {
-      content: 'Test1',
-      author: 'thabares',
-      createdAt: new Date(),
-      likes: 0,
-      comments: [],
-    },
-    // ... other initial posts
-  ]);
+  const [posts, setPosts] = useState([]);
   const [content, setContent] = useState('');
   const [commentInputs, setCommentInputs] = useState(
     Array(posts.length).fill('')
@@ -182,27 +124,33 @@ const PostList = () => {
     }
   };
 
-  const handleLike = (index) => {
-    const updatedPosts = [...posts];
-    updatedPosts[index].likes += 1; // Increment like count
-    setPosts(updatedPosts);
+  const handleBookmark = async (postId) => {
+    try {
+      const bookmarkResponse = await bookmarkPost(postId);
+      const updatedPosts = posts.map((post) =>
+        post._id === postId
+          ? { ...post, isBookmarked: bookmarkResponse.isBookmarked } // Update the bookmarked status
+          : post
+      );
+
+      setPosts(updatedPosts); // Set the updated posts in state
+      Toaster.sucess(
+        bookmarkResponse.isBookmarked
+          ? 'Bookmarked successfully'
+          : 'Removed bookmark'
+      );
+    } catch (err) {
+      Toaster.error('Error bookmarking your post.');
+      console.log(err);
+    }
   };
 
-  const handleCommentChange = (index, value) => {
-    const updatedInputs = [...commentInputs];
-    updatedInputs[index] = value; // Update input value for the comment
-    setCommentInputs(updatedInputs);
-  };
-
-  const handleCommentSubmit = (index) => {
-    const comment = commentInputs[index].trim();
-    if (comment) {
-      const updatedPosts = [...posts];
-      updatedPosts[index].comments.push(comment); // Add comment to the post
-      setPosts(updatedPosts);
-      const updatedInputs = [...commentInputs];
-      updatedInputs[index] = ''; // Clear input after submitting
-      setCommentInputs(updatedInputs);
+  const deleteYourPost = async (postId) => {
+    try {
+      await deletePost(postId);
+    } catch (err) {
+      Toaster.error('Failed to delete your post');
+      console.log(err);
     }
   };
 
@@ -226,30 +174,16 @@ const PostList = () => {
       <PostListWrapper>
         {posts.map((post, index) => (
           <PostListContainer key={index} value={index}>
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
-            <div>Author: {post.author.username}</div>
-            <div>Created At: {post.createdAt.toString()}</div>
-            {/* <PostActions>
-              <LikeButton onClick={() => handleLike(index)}>
-                Like {post.likes}
-              </LikeButton>
-            </PostActions>
-            <CommentWrapper>
-              <CommentInput
-                type='text'
-                value={commentInputs[index]} // Bind input value
-                onChange={(e) => handleCommentChange(index, e.target.value)}
-                placeholder='Add a comment...'
-              />
-              <CommentButton onClick={() => handleCommentSubmit(index)}>
-                Comment
-              </CommentButton>
-            </CommentWrapper>
-            <CommentList>
-              {post.comments.map((comment, commentIndex) => (
-                <div key={commentIndex}>{comment}</div>
-              ))}
-            </CommentList> */}
+            <Post
+              content={post.content}
+              createdAt={post.createdAt}
+              author={post.author}
+              published={post.published}
+              isBookmarked={post.isBookmarked}
+              postId={post._id}
+              handleBookmark={handleBookmark}
+              deleteYourPost={deleteYourPost}
+            />
           </PostListContainer>
         ))}
       </PostListWrapper>

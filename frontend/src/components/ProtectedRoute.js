@@ -17,15 +17,11 @@ const ProtectedRoute = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const persistedAuth =
-          localStorage.getItem('isAuthenticated') === 'true';
-        if (persistedAuth) {
-          setIsAuthenticated(true);
-        } else {
-          const userInformation = await axiosInstance.get('/auth/checkAuth');
-          setUserInformation(userInformation.data.user);
-          setIsAuthenticated(true);
-        }
+        // const persistedAuth =
+        //   localStorage.getItem('isAuthenticated') === 'true';
+        const userInformation = await axiosInstance.get('/auth/checkAuth');
+        setUserInformation(userInformation.data.user);
+        setIsAuthenticated(true);
       } catch (error) {
         setIsAuthenticated(false);
       }
