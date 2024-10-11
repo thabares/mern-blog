@@ -37,11 +37,11 @@ app.use('/api/post', postRoutes);
 app.use('/api', uploadRoutes);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, './frontend/build')));
+app.use(express.static(path.join(__dirname, 'frontend/build')));
 
 // Catch-all route to serve the React app for any non-API request
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
 });
 
 // Start the server

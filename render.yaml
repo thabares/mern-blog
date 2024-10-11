@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: MERN-Blog-Backend
+    env: node
+    buildCommand: 'npm install'
+    startCommand: 'node server.js'
+    envVars:
+      - key: NODE_ENV
+        value: production
+    plan: free
+    regions: oregon
+    routes:
+      - type: manual
+        source: /.*
+        target: /
+
+  - type: static
+    name: MERN-Blog-Frontend
+    env: static
+    buildCommand: 'npm install && npm run build'
+    staticPublishPath: frontend/build
+    plan: free
+    routes:
+      - type: auto
