@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://mern-blog-xu6a.onrender.com/api',
   withCredentials: true, // Include cookies in requests
 });
 
@@ -25,7 +25,7 @@ axiosInstance.interceptors.response.use(
       try {
         // Attempt to refresh the access token
         const { data } = await axios.post(
-          'http://localhost:8080/api/auth/token',
+          'https://mern-blog-xu6a.onrender.com/api/auth/token',
           {},
           { withCredentials: true }
         );

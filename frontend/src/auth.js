@@ -1,7 +1,7 @@
 import axios from 'axios';
 import axiosInstance from './axiosInterceptor'; // Your axios interceptor setup
 
-const API_URL = 'http://localhost:8080/api'; // Adjust if needed
+const API_URL = 'https://mern-blog-xu6a.onrender.com/api'; // Adjust if needed
 
 // Login Function: Handles login, tokens are stored in cookies
 export const login = async ({ username, password }) => {
