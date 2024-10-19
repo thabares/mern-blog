@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { register } from '../auth';
 import Header from '../components/Header';
 import styled from 'styled-components';
@@ -8,6 +8,7 @@ import Button from '../components/Button';
 import Toaster from '../components/Toaster';
 import { FiSunset } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../App';
 
 const Wrapper = styled.section``;
 
@@ -54,6 +55,7 @@ const FormHeader = styled.h2`
 
 const Register = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext); // Access isAuthenticated from AuthContext
   const [formFields, setFormFields] = useState({
     fullName: '',
     username: '',
@@ -61,6 +63,12 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/'); // Redirect to home if the user is already authenticated
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleFormFields = (event) => {
     const { name, value } = event.target;
