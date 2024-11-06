@@ -19,7 +19,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Use CORS
 const corsOptions = {
-  origin: 'https://mern-blog-xu6a.onrender.com', // Change this to your frontend's URL
+  origin: ['https://mern-blog-xu6a.onrender.com', 'http://localhost:3000'], // Change this to your frontend's URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // Allows the server to accept cookies
 };

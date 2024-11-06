@@ -34,6 +34,7 @@ const InputField = ({
   required,
   name,
   value,
+  error, // New error prop
 }) => {
   return (
     <InputElementContainer>
@@ -51,7 +52,12 @@ const InputField = ({
         required
         value={value}
       />
+      {error && (
+        <span style={{ color: '#bf4f74', fontSize: '0.8rem' }}>{error}</span>
+      )}{' '}
+      {/* Display error */}
     </InputElementContainer>
   );
 };
+
 export default InputField;

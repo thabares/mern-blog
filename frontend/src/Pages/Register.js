@@ -53,9 +53,60 @@ const FormHeader = styled.h2`
   color: #bf4f74;
 `;
 
+const validationConfig = {
+  fullName: {
+    required: true,
+    minLength: 2,
+    maxLength: 50,
+    pattern: /^[a-zA-Z\s]+$/,
+    messages: {
+      required: 'Full Name is required.',
+      minLength: 'Full Name must be at least 2 characters.',
+      pattern: 'Full Name can only contain letters.',
+    },
+  },
+  username: {
+    required: true,
+    minLength: 3,
+    maxLength: 15,
+    pattern: /^[a-zA-Z0-9]+$/,
+    messages: {
+      required: 'Username is required.',
+      minLength: 'Username must be between 3 and 15 characters.',
+      maxLength: 'Username must be at most 15 characters.',
+      pattern: 'Username can only contain letters and numbers.',
+    },
+  },
+  email: {
+    required: true,
+    pattern: /\S+@\S+\.\S+/,
+    messages: {
+      required: 'Email is required.',
+      pattern: 'Email is invalid.',
+    },
+  },
+  password: {
+    required: true,
+    minLength: 8,
+    messages: {
+      required: 'Password is required.',
+      minLength: 'Password must be at least 8 characters long.',
+      custom:
+        'Password must contain at least one uppercase letter, one lowercase letter, and one number.',
+    },
+  },
+  confirmPassword: {
+    required: true,
+    messages: {
+      required: 'Confirm Password is required.',
+      match: 'Passwords do not match.',
+    },
+  },
+};
+
 const Register = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useContext(AuthContext); // Access isAuthenticated from AuthContext
+  const { isAuthenticated } = useContext(AuthContext);
   const [formFields, setFormFields] = useState({
     fullName: '',
     username: '',
@@ -63,10 +114,11 @@ const Register = () => {
     password: '',
     confirmPassword: '',
   });
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/'); // Redirect to home if the user is already authenticated
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -75,15 +127,68 @@ const Register = () => {
     setFormFields({ ...formFields, [name]: value });
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+
+    Object.keys(validationConfig).forEach((field) => {
+      const config = validationConfig[field];
+      const value = formFields[field];
+
+      // Required check
+      if (config.required && !value) {
+        newErrors[field] = config.messages.required;
+        return;
+      }
+
+      // Length checks
+      if (config.minLength && value.length < config.minLength) {
+        newErrors[field] = config.messages.minLength;
+        return;
+      }
+      if (config.maxLength && value.length > config.maxLength) {
+        newErrors[field] = config.messages.maxLength;
+        return;
+      }
+
+      // Pattern check
+      if (config.pattern && !config.pattern.test(value)) {
+        newErrors[field] = config.messages.pattern;
+        return;
+      }
+
+      // Custom checks (for password confirmation)
+      if (field === 'confirmPassword' && value !== formFields.password) {
+        newErrors[field] = config.messages.match;
+        return;
+      }
+
+      // Special checks for password complexity
+      if (field === 'password') {
+        if (!/[a-z]/.test(value) || !/[A-Z]/.test(value) || !/\d/.test(value)) {
+          newErrors[field] = config.messages.custom;
+        }
+      }
+    });
+
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateFields();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return; // Prevent form submission
+    }
+
     try {
       const res = await register(formFields);
-      Toaster.sucess('User registered successfully!'); // Notify user of success
+      Toaster.sucess('User registered successfully!');
       navigate('/login');
     } catch (error) {
       console.error(error);
-      Toaster.error('Registration failed. Please try again.'); // Notify user of failure
+      Toaster.error('Registration failed. Please try again.');
     }
   };
 
@@ -101,15 +206,16 @@ const Register = () => {
             label='Fullname'
             name='fullName'
             onChange={handleFormFields}
-            required={true}
             value={formFields.fullName}
+            error={errors.fullName}
           />
           <InputField
             placeholder='Username'
             label='Username'
             name='username'
             onChange={handleFormFields}
-            required={true}
+            value={formFields.username}
+            error={errors.username}
           />
           <InputField
             type='email'
@@ -117,7 +223,8 @@ const Register = () => {
             label='Email'
             name='email'
             onChange={handleFormFields}
-            required={true}
+            value={formFields.email}
+            error={errors.email}
           />
           <InputField
             type='password'
@@ -125,7 +232,8 @@ const Register = () => {
             name='password'
             placeholder='Password'
             onChange={handleFormFields}
-            required={true}
+            value={formFields.password}
+            error={errors.password}
           />
           <InputField
             type='password'
@@ -133,7 +241,8 @@ const Register = () => {
             label='Confirm password'
             name='confirmPassword'
             onChange={handleFormFields}
-            required={true}
+            value={formFields.confirmPassword}
+            error={errors.confirmPassword}
           />
           <Button type='submit' label='Register' icon={<FaRegistered />} />
         </FormWrapper>

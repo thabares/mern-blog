@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '../baseUrl';
 
 const Upload = () => {
   const [file, setFile] = useState(null);
@@ -21,12 +22,9 @@ const Upload = () => {
     formData.append('image', file);
 
     try {
-      const response = await axios.post(
-        'https://mern-blog-xu6a.onrender.com/api/upload',
-        {
-          file,
-        }
-      );
+      const response = await axios.post(`${API_URL}/api/upload`, {
+        file,
+      });
       setImageUrl(response.data.url);
     } catch (error) {
       console.error('Upload failed', error);
@@ -35,12 +33,9 @@ const Upload = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await axios.post(
-        'https://mern-blog-xu6a.onrender.com/api/delete',
-        {
-          url: imageUrl,
-        }
-      );
+      const response = await axios.post(`${API_URL}api/delete`, {
+        url: imageUrl,
+      });
       console.log('response delete', response);
     } catch (err) {
       console.log('Error deleting file', err);

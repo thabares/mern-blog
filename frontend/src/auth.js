@@ -1,14 +1,13 @@
 import axios from 'axios';
 import axiosInstance from './axiosInterceptor'; // Your axios interceptor setup
-
-const API_URL = 'https://mern-blog-xu6a.onrender.com/api'; // Adjust if needed
+import { API_URL } from './baseUrl';
 
 // Login Function: Handles login, tokens are stored in cookies
 export const login = async ({ username, password }) => {
   try {
     // Sending the login request, cookies will be automatically managed
     const response = await axios.post(
-      `${API_URL}/auth/login`,
+      `${API_URL}/api/auth/login`,
       { username, password },
       { withCredentials: true }
     );
@@ -23,9 +22,13 @@ export const login = async ({ username, password }) => {
 export const register = async (formValue) => {
   try {
     // Sending the login request, cookies will be automatically managed
-    const response = await axios.post(`${API_URL}/auth/register`, formValue, {
-      withCredentials: true,
-    });
+    const response = await axios.post(
+      `${API_URL}/api/auth/register`,
+      formValue,
+      {
+        withCredentials: true,
+      }
+    );
     // No need to store tokens manually, they will be stored in HTTP-only cookies
     return response.data;
   } catch (error) {
@@ -36,19 +39,19 @@ export const register = async (formValue) => {
 // Fetch Protected Data: Handles requests to protected endpoints
 export const fetchProtectedData = async () => {
   // No need to manually add the token; the cookie will automatically be sent with the request
-  const response = await axiosInstance.get(`${API_URL}/auth/protected`);
+  const response = await axiosInstance.get(`${API_URL}/api/auth/protected`);
   return response.data;
 };
 
 export const createPosts = async (content) => {
-  const response = await axiosInstance.post(`${API_URL}/post/create-post`, {
+  const response = await axiosInstance.post(`${API_URL}/api/post/create-post`, {
     content,
   });
   return response.data;
 };
 
 export const getPosts = async () => {
-  const response = await axiosInstance.get(`${API_URL}/post`);
+  const response = await axiosInstance.get(`${API_URL}/api/post`);
 
   return response.data;
 };
@@ -62,6 +65,6 @@ export const bookmarkPost = async (postId) => {
 };
 
 export const deletePost = async (postId) => {
-  const response = await axiosInstance.delete(`${API_URL}/post/${postId}`);
+  const response = await axiosInstance.delete(`${API_URL}/api/post/${postId}`);
   return response.data;
 };

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { login } from '../auth';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import Upload from '../components/Upload';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FiSunset } from 'react-icons/fi';
 import Header from '../components/Header';
@@ -50,39 +49,104 @@ const FormHeader = styled.h2`
   color: #bf4f74;
 `;
 
+const validationConfig = {
+  username: {
+    required: true,
+    messages: {
+      required: 'Username/Email is required.',
+      pattern: 'Invalid username/email format.',
+    },
+    pattern: /^\S+@\S+\.\S+|^[a-zA-Z0-9]+$/, // Accepts either email or alphanumeric username
+  },
+  password: {
+    required: true,
+    minLength: 8,
+    messages: {
+      required: 'Password is required.',
+      minLength: 'Password must be at least 8 characters long.',
+    },
+  },
+};
+
 const Login = () => {
-  const [formFields, setFormData] = useState({
+  const [formFields, setFormFields] = useState({
     username: '',
     password: '',
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { isAuthenticated } = useContext(AuthContext); // Access isAuthenticated from AuthContext
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/'); // Redirect to home if the user is already authenticated
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
   const handleFormFields = (event) => {
     const { name, value } = event.target;
-    setFormData({
+    setFormFields({
       ...formFields,
       [name]: value,
     });
   };
 
+  const validateFields = () => {
+    const newErrors = {};
+
+    Object.keys(validationConfig).forEach((field) => {
+      const config = validationConfig[field];
+      const value = formFields[field];
+
+      // Required check
+      if (config.required && !value) {
+        newErrors[field] = config.messages.required;
+        return;
+      }
+
+      // Length check for password
+      if (
+        field === 'password' &&
+        config.minLength &&
+        value.length < config.minLength
+      ) {
+        newErrors[field] = config.messages.minLength;
+        return;
+      }
+
+      // Pattern check for username/email
+      if (
+        field === 'username' &&
+        config.pattern &&
+        !config.pattern.test(value)
+      ) {
+        newErrors[field] = config.messages.pattern;
+        return;
+      }
+    });
+
+    return newErrors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const validationErrors = validateFields();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return; // Prevent form submission
+    }
+
     try {
       const res = await login(formFields);
-      // Debugging: Check if res contains the expected structure
-      // Since tokens are stored in cookies, we don't need to save them in local storage
       Toaster.sucess('Logged in successfully!');
-      navigate('/'); // Redirect to the desired route after login
+      navigate('/');
     } catch (error) {
       console.error(error);
-      Toaster.error('Login failed. Please check your credentials.');
+      Toaster.error(
+        error.response.data.msg ??
+          'Login failed. Please check your credentials.'
+      );
     }
   };
 
@@ -101,7 +165,7 @@ const Login = () => {
             name='username'
             onChange={handleFormFields}
             value={formFields.username}
-            required={true}
+            error={errors.username} // Pass error message if exists
           />
           <InputField
             type='password'
@@ -110,7 +174,7 @@ const Login = () => {
             placeholder='Password'
             value={formFields.password}
             onChange={handleFormFields}
-            required={true}
+            error={errors.password} // Pass error message if exists
           />
           <Button type='submit' label='Login' icon={<RiLoginBoxFill />} />
         </FormWrapper>
