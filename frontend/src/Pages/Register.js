@@ -237,7 +237,7 @@ const Register = () => {
           />
           <InputField
             type='password'
-            placeholder='Confirm password'
+            placeholder='Confirm_password'
             label='Confirm password'
             name='confirmPassword'
             onChange={handleFormFields}
